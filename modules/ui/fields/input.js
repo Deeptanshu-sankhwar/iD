@@ -129,44 +129,62 @@ export function uiFieldText(field, context) {
                     return t(`inspector.${which}`);
                 })
                 .merge(buttons)
-                .on('click', function(d3_event, d) {
+                .on('mousedown', function(d3_event, d) {
                     d3_event.preventDefault();
 
-                    // do nothing if this is a multi-selection with mixed values
-                    var isMixed = Array.isArray(_tags[field.key]);
-                    if (isMixed) return;
+                    var intervalId;
+                    var updateValue = function() {
+                        // do nothing if this is a multi-selection with mixed values
+                        var isMixed = Array.isArray(_tags[field.key]);
+                        if (isMixed) return;
 
-                    var raw_vals = input.node().value || '0';
-                    var vals = raw_vals.split(';');
-                    vals = vals.map(function(v) {
-                        v = v.trim();
-                        const isRawNumber = likelyRawNumberFormat.test(v);
-                        var num = isRawNumber ? parseFloat(v) : parseLocaleFloat(v);
-                        if (isDirectionField) {
-                            const compassDir = cardinal[v.toLowerCase()];
-                            if (compassDir !== undefined) {
-                                num = compassDir;
+                        var raw_vals = input.node().value || '0';
+                        var vals = raw_vals.split(';');
+                        vals = vals.map(function(v) {
+                            v = v.trim();
+                            const isRawNumber = likelyRawNumberFormat.test(v);
+                            var num = isRawNumber ? parseFloat(v) : parseLocaleFloat(v);
+                            if (isDirectionField) {
+                                const compassDir = cardinal[v.toLowerCase()];
+                                if (compassDir !== undefined) {
+                                    num = compassDir;
+                                }
                             }
-                        }
 
-                        // do nothing if the value is neither a number, nor a cardinal direction
-                        if (!isFinite(num)) return v;
-                        num = parseFloat(num);
-                        if (!isFinite(num)) return v;
+                            // do nothing if the value is neither a number, nor a cardinal direction
+                            if (!isFinite(num)) return v;
+                            num = parseFloat(num);
+                            if (!isFinite(num)) return v;
 
-                        num += d;
-                        // clamp to 0..359 degree range if it's a direction field
-                        // https://github.com/openstreetmap/iD/issues/9386
-                        if (isDirectionField) {
-                            num = ((num % 360) + 360) % 360;
-                        }
-                        // make sure no extra decimals are introduced
-                        return formatFloat(clamped(num), isRawNumber
-                            ? (v.includes('.') ? v.split('.')[1].length : 0)
-                            : countDecimalPlaces(v));
-                    });
-                    input.node().value = vals.join(';');
-                    change()();
+                            num += d;
+                            // clamp to 0..359 degree range if it's a direction field
+                            // https://github.com/openstreetmap/iD/issues/9386
+                            if (isDirectionField) {
+                                num = ((num % 360) + 360) % 360;
+                            }
+                            // make sure no extra decimals are introduced
+                            return formatFloat(clamped(num), isRawNumber
+                                ? (v.includes('.') ? v.split('.')[1].length : 0)
+                                : countDecimalPlaces(v));
+                        });
+                        input.node().value = vals.join(';');
+                        change()();
+
+                    };
+
+                    // Trigger value update every 100ms
+                    updateValue();
+                    intervalId = setInterval(updateValue, 100);
+
+                    // Stop updating on mouseup or mouseleave
+                    d3_select(this)
+                        .on('mouseup mouseleave', function() {
+                            clearInterval(intervalId);
+                        });
+                    
+                })
+                .on('click', function(d3_event) {
+                    d3_event.preventDefault();
                 });
         } else if (field.type === 'identifier' && field.urlFormat && field.pattern) {
 
