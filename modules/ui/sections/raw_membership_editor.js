@@ -170,8 +170,10 @@ export function uiSectionRawMembershipEditor(context) {
     }
 
 
-    function addMembership(d, role) {
-        this.blur();           // avoid keeping focus on the button
+    function addMembership(d, role, domElement) {
+        if (domElement && typeof domElement.blur === 'function')   {
+            domElement.blur(); // avoid keeping focus on the button
+        }
         _showBlank = false;
 
         function actionAddMembers(relationId, ids, role) {
@@ -557,7 +559,7 @@ export function uiSectionRawMembershipEditor(context) {
             if (d.relation) utilHighlightEntities([d.relation.id], false, context);
 
             var role = context.cleanRelationRole(list.selectAll('.member-row-new .member-role').property('value'));
-            addMembership(d, role);
+            addMembership(d, role, this);
         }
 
 
