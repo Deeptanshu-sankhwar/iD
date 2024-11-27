@@ -55,7 +55,14 @@ export function uiFieldAddress(field, context) {
                     dist = geoSphericalDistance(choice.loc, l);
                 }
 
-                const value = resultProp && d.tags[resultProp] ? d.tags[resultProp] : d.tags.name;
+                const value = resultProp && d.tags[resultProp]
+                    ? d.tags[resultProp]
+                    : d.tags['name:en']
+                        ? d.tags['name:en'] // Fallback to English name
+                        : d.tags.name
+                            ? d.tags.name.split(';')[0].trim() // Use the first part of name (split by delimiter `;`)
+                            : null; // Default to null if no valid value exists
+
                 let title = value;
                 if (type === 'street') {
                     title = `${addrField.t('placeholders.street')}: ${title}`;
