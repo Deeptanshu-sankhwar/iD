@@ -170,10 +170,7 @@ export function uiSectionRawMembershipEditor(context) {
     }
 
 
-    function addMembership(d, role, domElement) {
-        if (domElement && typeof domElement.blur === 'function')   {
-            domElement.blur(); // avoid keeping focus on the button
-        }
+    function addMembership(d, role) {
         _showBlank = false;
 
         function actionAddMembers(relationId, ids, role) {
@@ -504,7 +501,10 @@ export function uiSectionRawMembershipEditor(context) {
         newMembership.selectAll('.member-entity-input')
             .on('blur', cancelEntity)   // if it wasn't accepted normally, cancel it
             .call(nearbyCombo
-                .on('accept', acceptEntity)
+                .on('accept', function(d) {
+                    this.blur(); //  always blurs the trigering element
+                    acceptEntity.call(this, d);
+                })
                 .on('cancel', cancelEntity)
             );
 
@@ -555,11 +555,12 @@ export function uiSectionRawMembershipEditor(context) {
                 cancelEntity();
                 return;
             }
+
             // remove hover-higlighting
             if (d.relation) utilHighlightEntities([d.relation.id], false, context);
 
             var role = context.cleanRelationRole(list.selectAll('.member-row-new .member-role').property('value'));
-            addMembership(d, role, this);
+            addMembership(d, role);
         }
 
 
