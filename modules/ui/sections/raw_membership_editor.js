@@ -555,7 +555,6 @@ export function uiSectionRawMembershipEditor(context) {
                 cancelEntity();
                 return;
             }
-
             // remove hover-higlighting
             if (d.relation) utilHighlightEntities([d.relation.id], false, context);
 
