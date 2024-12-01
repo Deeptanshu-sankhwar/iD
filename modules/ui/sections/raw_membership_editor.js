@@ -502,7 +502,7 @@ export function uiSectionRawMembershipEditor(context) {
             .on('blur', cancelEntity)   // if it wasn't accepted normally, cancel it
             .call(nearbyCombo
                 .on('accept', function(d) {
-                    this.blur(); //  always blurs the trigering element
+                    this.blur(); // always blurs the triggering element
                     acceptEntity.call(this, d);
                 })
                 .on('cancel', cancelEntity)
