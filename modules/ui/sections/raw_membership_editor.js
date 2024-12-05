@@ -377,7 +377,11 @@ export function uiSectionRawMembershipEditor(context) {
             .attr('class', 'member-entity-type')
             .text(function(d) {
                 var matched = presetManager.match(d.relation, context.graph());
-                return (matched && matched.name()) || t.html('inspector.relation');
+                var fullName = (matched && matched.name()) || t('inspector.relation');
+
+                // Remove the disambiguator (text in parentheses) from the full name
+                var simplifiedName = fullName.replace(/\s*\(.*?\)$/, ''); // Removes " (…)" at the end
+                return simplifiedName;
             });
 
         labelLink
