@@ -193,7 +193,12 @@ export function uiSectionRawMemberEditor(context) {
                         .attr('class', 'member-entity-type')
                         .text(function(d) {
                             var matched = presetManager.match(d.member, context.graph());
-                            return (matched && matched.name()) || utilDisplayType(d.member.id);
+
+                            var fullName = (matched && matched.name()) || utilDisplayType(d.member.id);
+
+                            // Remove the disambiguator (text in parentheses) from the full name
+                            var simplifiedName = fullName.replace(/\s*\(.*?\)$/, ''); // Removes " (…)" at the end
+                            return simplifiedName;
                         });
 
                     labelLink
