@@ -4988,10 +4988,10 @@ img.tile-debug {
     flex-direction: column;
 }
 
-.modal .content {
+/* .modal .content {
     overflow-x: hidden;
     overflow-y: auto;
-}
+} */
 
 .modal .loader {
     margin-bottom: 10px;
@@ -5028,6 +5028,12 @@ img.tile-debug {
 }
 .modal-section.buttons {
     text-align: center;
+}
+
+.content-wrapper {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: calc(90vh - 100px);
 }
 
 .modal-section.buttons button {

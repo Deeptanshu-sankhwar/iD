@@ -13,10 +13,14 @@ export function uiConfirm(selection) {
     section.append('div')
         .attr('class', 'modal-section header');
 
-    section.append('div')
+    // Wrapper for message-text and buttons
+    var contentWrapper = section.append('div')
+    .attr('class', 'content-wrapper');
+
+    contentWrapper.append('div')
         .attr('class', 'modal-section message-text');
 
-    var buttons = section.append('div')
+    var buttons = contentWrapper.append('div')
         .attr('class', 'modal-section buttons cf');
 
 

@@ -29,10 +29,14 @@ export function uiShortcuts(context) {
             .append('h2')
             .call(t.append('shortcuts.title'));
 
+        // Wrapper for grouping shortcuts list and buttons under content-wrapper
+        var wrapper = content.append('div')
+            .attr('class', 'content-wrapper modal-section');
+
         fileFetcher.get('shortcuts')
             .then(function(data) {
                 _dataShortcuts = data;
-                content.call(render);
+                wrapper.call(render);
             })
             .catch(function() { /* ignore */ });
     }
