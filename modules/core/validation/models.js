@@ -63,7 +63,7 @@ export function validationIssue(attrs) {
         var fixes = this.dynamicFixes ? this.dynamicFixes(context) : [];
         var issue = this;
 
-        if (issue.severity === 'warning') {
+        if (issue.severity === 'warning' && fixes.length > 0) {
             // allow ignoring any issue that's not an error
             fixes.push(new validationIssueFix({
                 title: t.append('issues.fix.ignore_issue.title'),
