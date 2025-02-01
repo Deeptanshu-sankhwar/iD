@@ -27,6 +27,7 @@ import {
 export function uiFeatureList(context) {
     var _geocodeResults;
 
+    var _selectedIDs = [];
 
     function featureList(selection) {
         var header = selection
@@ -99,6 +100,7 @@ export function uiFeatureList(context) {
 
         function inputevent() {
             _geocodeResults = undefined;
+            _selectedIDs = [];  // Reset selected IDs on new search to avoid old selections interfering
             drawList();
         }
 
@@ -346,7 +348,6 @@ export function uiFeatureList(context) {
             utilHighlightEntities([d.id], false, context);
         }
 
-
         function click(d3_event, d) {
             d3_event.preventDefault();
 
@@ -354,11 +355,28 @@ export function uiFeatureList(context) {
                 context.map().centerZoomEase([d.location[1], d.location[0]], 19);
 
             } else if (d.entity) {
-                utilHighlightEntities([d.id], false, context);
+                if (d3_event.shiftKey)  {
+                    // SHIFT + CLICK allows multi selection within the dropdown
+                    const index = _selectedIDs.indexOf(d.entity.id);
+                    if (index === -1) {
+                        _selectedIDs.push(d.entity.id);
+                    } else {
+                        _selectedIDs.splice(index, 1); // Remove if feature is already selected
+                    }
 
-                context.enter(modeSelect(context, [d.entity.id]));
-                context.map().zoomToEase(d.entity);
+                    utilHighlightEntities(_selectedIDs, true, context);
+                } else {
+                    if (_selectedIDs.length > 0)    {
+                        _selectedIDs.push(d.entity.id); // Show all the multiple shift selected features
+                    } else {
+                        _selectedIDs = [d.entity.id]; // Show only the single selected feature
+                    }
 
+                    utilHighlightEntities(_selectedIDs, true, context);
+
+                    context.enter(modeSelect(context, _selectedIDs));
+                    context.map().zoomToEase(d.entity);
+                }
             } else if (d.geometry  === 'note') {
                 // note
                 // get number part 'note12345'
