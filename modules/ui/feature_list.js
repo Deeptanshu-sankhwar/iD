@@ -127,11 +127,11 @@ export function uiFeatureList(context) {
             var locationMatch = sexagesimal.pair(q.toUpperCase()) || dmsMatcher(q);
 
             if (locationMatch) {
-                var latLon = [Number(locationMatch[0]), Number(locationMatch[1])];
-                var lonLat = [latLon[1], latLon[0]];  // also try swapped order
+                const latLon = [Number(locationMatch[0]), Number(locationMatch[1])];
+                const lonLat = [latLon[1], latLon[0]];  // also try swapped order
 
-                var isLatLonValid = latLon[0] >= -90 && latLon[0] <= 90 && latLon[1] >= -180 && latLon[1] <= 180;
-                var isLonLatValid = lonLat[0] >= -90 && lonLat[0] <= 90 && lonLat[1] >= -180 && lonLat[1] <= 180;
+                const isLatLonValid = latLon[0] >= -90 && latLon[0] <= 90 && latLon[1] >= -180 && latLon[1] <= 180;
+                let   isLonLatValid = lonLat[0] >= -90 && lonLat[0] <= 90 && lonLat[1] >= -180 && lonLat[1] <= 180;
                 isLonLatValid &&= !q.match(/[NSEW]/i);
                 isLonLatValid &&= lonLat[0] !== lonLat[1];
 
