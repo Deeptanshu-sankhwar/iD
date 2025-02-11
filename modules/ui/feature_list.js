@@ -132,6 +132,7 @@ export function uiFeatureList(context) {
 
                 var isLatLonValid = latLon[0] >= -90 && latLon[0] <= 90 && latLon[1] >= -180 && latLon[1] <= 180;
                 var isLonLatValid = lonLat[0] >= -90 && lonLat[0] <= 90 && lonLat[1] >= -180 && lonLat[1] <= 180;
+                isLonLatValid = isLonLatValid && !q.match(/[NSEW]/i);
 
                 if (isLatLonValid) {
                     result.push({
