@@ -128,12 +128,12 @@ export function uiFeatureList(context) {
 
             if (locationMatch) {
                 var latLon = [Number(locationMatch[0]), Number(locationMatch[1])];
-                var lonLat = [latLon[1], latLon[0]];  // Swap the order
+                var lonLat = [latLon[1], latLon[0]];  // also try swapped order
 
-                var isLatLonValid = latLon[0] >= -90 && latLon[0] <= 90;
-                var isLonLatValid = lonLat[0] >= -90 && lonLat[0] <= 90;
+                var isLatLonValid = latLon[0] >= -90 && latLon[0] <= 90 && latLon[1] >= -180 && latLon[1] <= 180;
+                var isLonLatValid = lonLat[0] >= -90 && lonLat[0] <= 90 && lonLat[1] >= -180 && lonLat[1] <= 180;
 
-                if (isLatLonValid && isLonLatValid) {
+                if (isLatLonValid) {
                     result.push({
                         id: latLon[0] + '/' + latLon[1],
                         geometry: 'point',
@@ -141,16 +141,8 @@ export function uiFeatureList(context) {
                         name: dmsCoordinatePair([latLon[1], latLon[0]]),
                         location: latLon
                     });
-
-                    result.push({
-                        id: lonLat[0] + '/' + lonLat[1],
-                        geometry: 'point',
-                        type: t('inspector.location'),
-                        name: dmsCoordinatePair([lonLat[1], lonLat[0]]),
-                        location: lonLat
-                    });
-                } else {
-                    // If one order is invalid, only push the valid one
+                }
+                if (isLonLatValid) {
                     result.push({
                         id: lonLat[0] + '/' + lonLat[1],
                         geometry: 'point',
