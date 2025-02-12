@@ -201,8 +201,8 @@
       "housename": 1,
       "street": 0.7,
       "housenumber": 0.3,
-      "neighbourhood": 0.3,
-      "city": 0.3
+      "neighbourhood": 0.5,
+      "city": 0.5
     }
   },
   {
