@@ -193,13 +193,14 @@
   {
     "countryCodes": ["bo"],
     "format": [
-      ["street", "housename", "housenumber"],
+      ["housename"],
+      ["street", "housenumber"],
       ["neighbourhood", "city"]
     ],
     "widths": {
-      "street": 0.4,
+      "housename": 1,
+      "street": 0.7,
       "housenumber": 0.3,
-      "housename": 0.4,
       "neighbourhood": 0.3,
       "city": 0.3
     }
