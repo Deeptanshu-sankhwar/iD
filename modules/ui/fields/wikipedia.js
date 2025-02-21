@@ -210,7 +210,9 @@ export function uiFieldWikipedia(field, context) {
     }
 
     if (value) {
-      syncTags.wikipedia = context.cleanTagValue(language()[2] + ':' + value);
+      const localLang = getLocalLanguageFromWikidata(_entityIDs);
+      const finalLang = localLang || language()[2]; // Use local language if found, else fallback
+      syncTags.wikipedia = context.cleanTagValue(finalLang + ':' + value);
     } else {
       syncTags.wikipedia = undefined;
     }
@@ -261,6 +263,26 @@ export function uiFieldWikipedia(field, context) {
     });
   }
 
+  // Fetch local language for this Wikidata ID
+  function getLocalLanguageFromWikidata(entityIDs) {
+    if (!wikidata || !entityIDs) return null;
+
+    for (let i in entityIDs) {
+      let entity = context.hasEntity(entityIDs[i]);
+      if (entity && entity.tags.wikidata) {
+        let wikidataID = entity.tags.wikidata;
+
+        let data = wikidata.itemByID(wikidataID);
+        if (data && data.sitelinks) {
+          let localLangEntry = Object.keys(data.sitelinks).find(lang => lang.endsWith('wiki'));
+          if (localLangEntry) {
+            return localLangEntry.replace('wiki', '');
+          }
+        }
+      }
+    }
+    return null; // No local language found
+  }
 
   wiki.tags = (tags) => {
     _tags = tags;
@@ -286,11 +308,14 @@ export function uiFieldWikipedia(field, context) {
       utilGetSetValue(_titleInput, tagArticleTitle + (anchor ? ('#' + anchor) : ''));
       _wikiURL = `${scheme}${tagLang}.${domain}/wiki/${wiki.encodePath(tagArticleTitle, anchor)}`;
     } else {
+      // If no wikipedia=* tag, check Wikidata for the local language
+      const localLang = getLocalLanguageFromWikidata(_entityIDs);
+      const finalLang = localLang || defaultLanguageInfo()[2]; // Prefer local language over default
+
       utilGetSetValue(_titleInput, value);
       if (value && value !== '') {
         utilGetSetValue(_langInput, '');
-        const defaultLangInfo = defaultLanguageInfo();
-        _wikiURL = `${scheme}${defaultLangInfo[2]}.${domain}/w/index.php?fulltext=1&search=${value}`;
+        _wikiURL = `${scheme}${finalLang[2]}.${domain}/w/index.php?fulltext=1&search=${value}`;
       } else {
         const shownOrDefaultLangInfo = language(true /* skipEnglishFallback */);
         utilGetSetValue(_langInput, shownOrDefaultLangInfo[1]);
